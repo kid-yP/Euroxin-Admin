@@ -48,10 +48,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/" className="w-full">
-                <SidebarMenuButton tooltip="Home">
+              <Link href="/dashboard" className="w-full">
+                <SidebarMenuButton tooltip="Dashboard">
                   <LayoutDashboard />
-                  <span>Home</span>
+                  <span>Dashboard</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
