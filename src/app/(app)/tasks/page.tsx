@@ -1,3 +1,10 @@
+
+"use client"
+
+import { useState, useEffect } from "react"
+import { collection, getDocs } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+
 import {
   Card,
   CardContent,
@@ -19,38 +26,39 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 
-const tasks = [
-  {
-    title: "Follow up with PharmaPlus",
-    type: "Follow-up",
-    date: "2024-07-29 10:00 AM",
-    location: "PharmaPlus Downtown",
-    status: "Completed",
-  },
-  {
-    title: "Initial visit to Central Clinic",
-    type: "New Visit",
-    date: "2024-07-30 02:00 PM",
-    location: "Central Clinic",
-    status: "Scheduled",
-  },
-  {
-    title: "Deliver samples to MediCare",
-    type: "Delivery",
-    date: "2024-08-01 11:00 AM",
-    location: "MediCare West",
-    status: "Pending",
-  },
-  {
-    title: "Quarterly Review Meeting",
-    type: "Meeting",
-    date: "2024-08-05 09:00 AM",
-    location: "Regional Office",
-    status: "Scheduled",
-  },
-]
+type Task = {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  location: string;
+  status: string;
+};
 
 export default function TasksPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "tasks"));
+        const tasksData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
+        setTasks(tasksData);
+      } catch (error) {
+        console.error("Error fetching tasks from Firestore:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  // For demonstration, we'll filter tasks for "This Week" on the client-side.
+  // A more robust solution might involve querying Firestore directly.
+  const weekTasks = tasks.slice(0, 2)
+
   return (
     <Card>
       <CardHeader>
@@ -68,26 +76,32 @@ export default function TasksPage() {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="month">
-          <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
-            <TabsTrigger value="week">This Week</TabsTrigger>
-            <TabsTrigger value="month">This Month</TabsTrigger>
-          </TabsList>
-          <TabsContent value="week">
-            <TaskTable tasks={tasks.slice(0, 2)} />
-          </TabsContent>
-          <TabsContent value="month">
-            <TaskTable tasks={tasks} />
-          </TabsContent>
-        </Tabs>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <p>Loading tasks from Firestore...</p>
+          </div>
+        ) : (
+          <Tabs defaultValue="month">
+            <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
+              <TabsTrigger value="week">This Week</TabsTrigger>
+              <TabsTrigger value="month">This Month</TabsTrigger>
+            </TabsList>
+            <TabsContent value="week">
+              <TaskTable tasks={weekTasks} />
+            </TabsContent>
+            <TabsContent value="month">
+              <TaskTable tasks={tasks} />
+            </TabsContent>
+          </Tabs>
+        )}
       </CardContent>
     </Card>
   )
 }
 
-function TaskTable({ tasks }: { tasks: typeof import('./page').tasks }) {
+function TaskTable({ tasks }: { tasks: Task[] }) {
   const getStatusVariant = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "completed":
         return "default"
       case "scheduled":
@@ -112,8 +126,8 @@ function TaskTable({ tasks }: { tasks: typeof import('./page').tasks }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {tasks.map((task, index) => (
-          <TableRow key={index}>
+        {tasks.map((task) => (
+          <TableRow key={task.id}>
             <TableCell className="font-medium">{task.title}</TableCell>
             <TableCell className="hidden md:table-cell">{task.type}</TableCell>
             <TableCell className="hidden lg:table-cell">{task.date}</TableCell>
