@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { MetricCard } from "@/components/dashboard/metric-card"
 import { FollowUpSuggestions } from "@/components/dashboard/follow-up-suggestions"
 import {
@@ -8,19 +11,23 @@ import {
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, CalendarCheck, CalendarClock } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Calendar, CalendarCheck, CalendarClock, MoreHorizontal, PlusCircle } from "lucide-react"
 
-const visitData = [
+const initialVisitData = [
   { name: "PharmaPlus Downtown", time: "10:00 AM", status: "Completed" },
   { name: "Central Clinic", time: "01:30 PM", status: "Pending" },
   { name: "MediCare West", time: "04:00 PM", status: "Pending" },
 ]
 
 export default function DashboardPage() {
+  const [visitData, setVisitData] = useState(initialVisitData)
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <MetricCard title="Visits Today" value="3" icon={Calendar} />
+        <MetricCard title="Visits Today" value={visitData.length.toString()} icon={Calendar} />
         <MetricCard title="Visits This Week" value="12" icon={CalendarCheck} />
         <MetricCard title="Visits This Month" value="45" icon={CalendarClock} />
       </div>
@@ -30,7 +37,13 @@ export default function DashboardPage() {
 
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Visit Plans</CardTitle>
+            <div className="flex justify-between items-start">
+              <CardTitle>Visit Plans</CardTitle>
+              <Button size="sm">
+                <PlusCircle className="mr-2" />
+                Add Visit
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible defaultValue="item-1">
@@ -40,13 +53,29 @@ export default function DashboardPage() {
                   <ul className="space-y-3">
                     {visitData.map((visit, i) => (
                       <li key={i} className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{visit.name}</p>
-                          <p className="text-sm text-muted-foreground">{visit.time}</p>
+                        <div className="flex items-center gap-4">
+                           <div>
+                            <p className="font-medium">{visit.name}</p>
+                            <p className="text-sm text-muted-foreground">{visit.time}</p>
+                          </div>
+                          <Badge variant={visit.status === "Completed" ? "default" : "secondary"}>
+                            {visit.status}
+                          </Badge>
                         </div>
-                        <Badge variant={visit.status === "Completed" ? "default" : "secondary"}>
-                          {visit.status}
-                        </Badge>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive">
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </li>
                     ))}
                   </ul>

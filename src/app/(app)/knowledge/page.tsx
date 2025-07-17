@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
+import { PlusCircle, MoreVertical } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const content = [
   {
@@ -104,11 +106,30 @@ export default function KnowledgePage() {
         </RadioGroup>
       </div>
       <div className="flex-1">
-        <h1 className="text-2xl font-bold mb-6">Knowledge Center</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Knowledge Center</h1>
+          <Button>
+            <PlusCircle className="mr-2" />
+            New Content
+          </Button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredContent.map((item, index) => (
             <Card key={index} className="flex flex-col">
-              <CardHeader className="p-0">
+              <CardHeader className="p-0 relative">
+                 <div className="absolute top-2 right-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 bg-black/20 hover:bg-black/40 text-white hover:text-white">
+                        <MoreVertical />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
                 <Image
                   src={item.image}
                   alt={item.title}
