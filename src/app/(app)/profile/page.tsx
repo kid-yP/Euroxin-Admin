@@ -16,7 +16,7 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Profile & Settings</h1>
+        <h1 className="text-2xl font-bold">Admin Profile & Settings</h1>
         <p className="text-muted-foreground">Manage your account and preferences.</p>
       </div>
       
@@ -36,19 +36,19 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" defaultValue="Field Rep" />
+              <Input id="name" defaultValue="Admin User" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" defaultValue="rep@euroxin.com" disabled />
+              <Input id="email" type="email" defaultValue="admin@euroxin.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="region">Region</Label>
-              <Input id="region" defaultValue="North" disabled />
+              <Input id="region" defaultValue="Global" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Input id="role" defaultValue="Marketer" disabled />
+              <Input id="role" defaultValue="Administrator" disabled />
             </div>
           </div>
           <Button>Save Changes</Button>
@@ -79,8 +79,8 @@ export default function ProfilePage() {
           <Separator />
           <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
-            <Input id="language" defaultValue="English" disabled/>
-            <p className="text-sm text-muted-foreground">Language selection is managed by your administrator.</p>
+            <Input id="language" defaultValue="English" />
+            <p className="text-sm text-muted-foreground">Set the default language for the application.</p>
           </div>
         </CardContent>
       </Card>
