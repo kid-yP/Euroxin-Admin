@@ -1,10 +1,6 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
-import { collection, getDocs } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-
 import {
   Card,
   CardContent,
@@ -26,37 +22,44 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 
-type Task = {
-  id: string;
-  title: string;
-  type: string;
-  date: string;
-  location: string;
-  status: string;
-};
+const tasks = [
+    {
+      id: "1",
+      title: "Follow-up with Dr. Smith",
+      type: "Follow-up Call",
+      date: "2024-05-22 10:00 AM",
+      location: "Remote",
+      status: "Completed",
+    },
+    {
+      id: "2",
+      title: "Deliver samples to City Clinic",
+      type: "Sample Drop-off",
+      date: "2024-05-23 02:30 PM",
+      location: "City Clinic",
+      status: "Scheduled",
+    },
+    {
+      id: "3",
+      title: "Prepare monthly report",
+      type: "Admin",
+      date: "2024-05-30",
+      location: "Home Office",
+      status: "Pending",
+    },
+     {
+      id: "4",
+      title: "Training session for Product X",
+      type: "Training",
+      date: "2024-06-05 09:00 AM",
+      location: "Main Office",
+      status: "Scheduled",
+    },
+]
+
+type Task = typeof tasks[0]
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "tasks"));
-        const tasksData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
-        setTasks(tasksData);
-      } catch (error) {
-        console.error("Error fetching tasks from Firestore:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []);
-
-  // For demonstration, we'll filter tasks for "This Week" on the client-side.
-  // A more robust solution might involve querying Firestore directly.
   const weekTasks = tasks.slice(0, 2)
 
   return (
@@ -76,24 +79,18 @@ export default function TasksPage() {
         </div>
       </CardHeader>
       <CardContent>
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <p>Loading tasks from Firestore...</p>
-          </div>
-        ) : (
-          <Tabs defaultValue="month">
-            <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
-              <TabsTrigger value="week">This Week</TabsTrigger>
-              <TabsTrigger value="month">This Month</TabsTrigger>
-            </TabsList>
-            <TabsContent value="week">
-              <TaskTable tasks={weekTasks} />
-            </TabsContent>
-            <TabsContent value="month">
-              <TaskTable tasks={tasks} />
-            </TabsContent>
-          </Tabs>
-        )}
+        <Tabs defaultValue="month">
+          <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
+            <TabsTrigger value="week">This Week</TabsTrigger>
+            <TabsTrigger value="month">This Month</TabsTrigger>
+          </TabsList>
+          <TabsContent value="week">
+            <TaskTable tasks={weekTasks} />
+          </TabsContent>
+          <TabsContent value="month">
+            <TaskTable tasks={tasks} />
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   )

@@ -1,8 +1,5 @@
-"use client";
 
-import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+"use client"
 
 import {
   Card,
@@ -29,35 +26,36 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 
-type POI = {
-  id: string;
-  name: string;
-  type: string;
-  address: string;
-  rep: string;
-  status: string;
-};
+const pointsOfInterest = [
+  {
+    id: "1",
+    name: "City General Hospital",
+    type: "Hospital",
+    address: "123 Health St, Metro City",
+    rep: "Alice Johnson",
+    status: "Active",
+  },
+  {
+    id: "2",
+    name: "Downtown Pharmacy",
+    type: "Pharmacy",
+    address: "456 Cure Ave, Metro City",
+    rep: "Bob Williams",
+    status: "Prospect",
+  },
+  {
+    id: "3",
+    name: "Wellness Clinic",
+    type: "Clinic",
+    address: "789 Wellness Blvd, Metro City",
+    rep: "Alice Johnson",
+    status: "Inactive",
+  },
+]
+
+type POI = typeof pointsOfInterest[0]
 
 export default function POIPage() {
-  const [pointsOfInterest, setPointsOfInterest] = useState<POI[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPOIs = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "poi"));
-        const pois = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as POI));
-        setPointsOfInterest(pois);
-      } catch (error) {
-        console.error("Error fetching POIs from Firestore:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPOIs();
-  }, []);
-
   const getStatusVariant = (status: string) => {
     switch (status?.toLowerCase()) {
       case "active":
@@ -88,11 +86,6 @@ export default function POIPage() {
         </div>
       </CardHeader>
       <CardContent>
-         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <p>Loading data from Firestore...</p>
-          </div>
-        ) : (
         <Table>
           <TableHeader>
             <TableRow>
@@ -109,13 +102,17 @@ export default function POIPage() {
               <TableRow key={poi.id}>
                 <TableCell className="font-medium">{poi.name}</TableCell>
                 <TableCell className="hidden md:table-cell">{poi.type}</TableCell>
-                <TableCell className="hidden lg:table-cell">{poi.address}</TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {poi.address}
+                </TableCell>
                 <TableCell className="hidden md:table-cell">{poi.rep}</TableCell>
                 <TableCell>
-                  <Badge variant={getStatusVariant(poi.status)}>{poi.status}</Badge>
+                  <Badge variant={getStatusVariant(poi.status)}>
+                    {poi.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                   <DropdownMenu>
+                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="h-8 w-8 p-0">
                         <span className="sr-only">Open menu</span>
@@ -135,7 +132,6 @@ export default function POIPage() {
             ))}
           </TableBody>
         </Table>
-        )}
       </CardContent>
     </Card>
   )
