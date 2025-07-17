@@ -1,3 +1,9 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
 import {
   Card,
   CardContent,
@@ -23,47 +29,37 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MoreHorizontal, PlusCircle } from "lucide-react"
 
-const pointsOfInterest = [
-  {
-    name: "PharmaPlus Downtown",
-    type: "Pharmacy",
-    address: "123 Main St, Anytown",
-    rep: "Field Rep",
-    status: "Active",
-  },
-  {
-    name: "Central Clinic",
-    type: "Clinic",
-    address: "456 Oak Ave, Anytown",
-    rep: "Field Rep",
-    status: "Active",
-  },
-  {
-    name: "MediCare West",
-    type: "Hospital",
-    address: "789 Pine Ln, Anytown",
-    rep: "Field Rep",
-    status: "Active",
-  },
-  {
-    name: "Northside Hospital",
-    type: "Hospital",
-    address: "101 Maple Dr, Othertown",
-    rep: "Unassigned",
-    status: "Prospect",
-  },
-  {
-    name: "Community Care Pharmacy",
-    type: "Pharmacy",
-    address: "212 Birch Rd, Othertown",
-    rep: "Field Rep",
-    status: "Inactive",
-  },
-]
+type POI = {
+  id: string;
+  name: string;
+  type: string;
+  address: string;
+  rep: string;
+  status: string;
+};
 
 export default function POIPage() {
+  const [pointsOfInterest, setPointsOfInterest] = useState<POI[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPOIs = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "poi"));
+        const pois = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as POI));
+        setPointsOfInterest(pois);
+      } catch (error) {
+        console.error("Error fetching POIs from Firestore:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPOIs();
+  }, []);
+
   const getStatusVariant = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "active":
         return "default"
       case "prospect":
@@ -92,6 +88,11 @@ export default function POIPage() {
         </div>
       </CardHeader>
       <CardContent>
+         {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <p>Loading data from Firestore...</p>
+          </div>
+        ) : (
         <Table>
           <TableHeader>
             <TableRow>
@@ -104,8 +105,8 @@ export default function POIPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pointsOfInterest.map((poi, index) => (
-              <TableRow key={index}>
+            {pointsOfInterest.map((poi) => (
+              <TableRow key={poi.id}>
                 <TableCell className="font-medium">{poi.name}</TableCell>
                 <TableCell className="hidden md:table-cell">{poi.type}</TableCell>
                 <TableCell className="hidden lg:table-cell">{poi.address}</TableCell>
@@ -134,6 +135,7 @@ export default function POIPage() {
             ))}
           </TableBody>
         </Table>
+        )}
       </CardContent>
     </Card>
   )
