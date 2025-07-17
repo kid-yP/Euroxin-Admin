@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { MetricCard } from "@/components/dashboard/metric-card"
-import { FollowUpSuggestions } from "@/components/dashboard/follow-up-suggestions"
 import {
   Accordion,
   AccordionContent,
@@ -32,10 +31,8 @@ export default function DashboardPage() {
         <MetricCard title="Visits This Month" value="45" icon={CalendarClock} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <FollowUpSuggestions />
-
-        <Card className="col-span-1">
+      <div className="grid grid-cols-1 gap-6">
+        <Card>
           <CardHeader>
             <div className="flex justify-between items-start">
               <CardTitle>Visit Plans</CardTitle>
