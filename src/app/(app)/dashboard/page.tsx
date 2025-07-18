@@ -8,11 +8,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Calendar, CalendarCheck, CalendarClock, MoreHorizontal, PlusCircle } from "lucide-react"
+import { Calendar, CalendarCheck, CalendarClock, MoreHorizontal, PlusCircle, CheckCircle, Award } from "lucide-react"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+
 
 const initialVisitData = [
   { name: "PharmaPlus Downtown", time: "10:00 AM", status: "Completed" },
@@ -20,34 +22,51 @@ const initialVisitData = [
   { name: "MediCare West", time: "04:00 PM", status: "Pending" },
 ]
 
+const visitsByRegionData = [
+  { region: "North", visits: 18 },
+  { region: "South", visits: 12 },
+  { region: "East", visits: 25 },
+  { region: "West", visits: 8 },
+  { region: "Central", visits: 15 },
+]
+
+
 export default function DashboardPage() {
   const [visitData, setVisitData] = useState(initialVisitData)
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard title="Visits Today" value={visitData.length.toString()} icon={Calendar} />
         <MetricCard title="Visits This Week" value="12" icon={CalendarCheck} />
         <MetricCard title="Visits This Month" value="45" icon={CalendarClock} />
+        <MetricCard title="Completion Rate" value="85%" icon={CheckCircle} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle>Visit Plans</CardTitle>
-              <Button size="sm">
-                <PlusCircle className="mr-2" />
-                Add Visit
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Today&apos;s Visits</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-3">
+            <CardHeader>
+                <CardTitle>Visits by Region</CardTitle>
+                <CardDescription>A breakdown of field visits across different regions.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={visitsByRegionData}>
+                  <XAxis dataKey="region" stroke="#888888" fontSize={12} tickLine={false} axisLine={false}/>
+                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`}/>
+                  <Tooltip cursor={{fill: 'hsl(var(--secondary))'}} contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))'}}/>
+                  <Bar dataKey="visits" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+        </Card>
+         <Card>
+            <CardHeader>
+                <CardTitle>Visit Plans</CardTitle>
+                <CardDescription>Today's scheduled visits.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <ul className="space-y-3">
                     {visitData.map((visit, i) => (
                       <li key={i} className="flex justify-between items-center">
                         <div className="flex items-center gap-4">
@@ -76,22 +95,7 @@ export default function DashboardPage() {
                       </li>
                     ))}
                   </ul>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>This Week&apos;s Plan</AccordionTrigger>
-                <AccordionContent>
-                  List of visits planned for this week.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>This Month&apos;s Plan</AccordionTrigger>
-                <AccordionContent>
-                  Overview of all visits for the current month.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
+            </CardContent>
         </Card>
       </div>
     </div>
