@@ -19,6 +19,7 @@ import {
   Settings,
   MapPin,
   Users,
+  Map,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -68,6 +69,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <SidebarMenuButton tooltip="Tasks">
                   <ClipboardCheck />
                   <span>Tasks</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/tracking" className="w-full">
+                <SidebarMenuButton tooltip="Tracking">
+                  <Map />
+                  <span>Tracking</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
