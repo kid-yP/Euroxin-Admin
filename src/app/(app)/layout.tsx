@@ -18,7 +18,6 @@ import {
   LifeBuoy,
   Settings,
   MapPin,
-  User,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -72,14 +71,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/knowledge" className="w-full">
-                <SidebarMenuButton tooltip="Knowledge Center">
-                  <BookOpen />
-                  <span>Knowledge Center</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
               <Link href="/poi" className="w-full">
                 <SidebarMenuButton tooltip="Points of Interest">
                   <MapPin />
@@ -87,11 +78,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-             <SidebarMenuItem>
-              <Link href="/profile" className="w-full">
-                <SidebarMenuButton tooltip="Profile">
-                  <User />
-                  <span>Profile</span>
+            <SidebarMenuItem>
+              <Link href="/knowledge" className="w-full">
+                <SidebarMenuButton tooltip="Knowledge Center">
+                  <BookOpen />
+                  <span>Knowledge Center</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
